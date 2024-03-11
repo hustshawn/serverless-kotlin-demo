@@ -18,7 +18,7 @@ import software.amazon.awscdk.services.dynamodb.BillingMode
 import software.amazon.awscdk.services.dynamodb.Table
 import software.amazon.awscdk.services.lambda.*
 import software.amazon.awscdk.services.lambda.Function
-import software.amazon.awscdk.services.logs.RetentionDays
+import software.amazon.awscdk.RemovalPolicy
 import software.constructs.Construct
 
 class InfrastructureStack constructor(scope: Construct, id: String, props: StackProps) : Stack(scope, id, props) {
@@ -45,6 +45,7 @@ class InfrastructureStack constructor(scope: Construct, id: String, props: Stack
                     .build()
             )
             .billingMode(BillingMode.PAY_PER_REQUEST)
+            .removalPolicy(RemovalPolicy.DESTROY)
             .build()
         val environmentVariables = mapOf(
             "PRODUCT_TABLE" to productsTable.tableName,
@@ -139,7 +140,6 @@ class InfrastructureStack constructor(scope: Construct, id: String, props: Stack
         .runtime(Runtime.JAVA_11)
         .code(Code.fromAsset(codePath))
         .architecture(Architecture.ARM_64)
-        .logRetention(RetentionDays.ONE_WEEK)
         .memorySize(MEMORY_SIZE)
         .timeout(Duration.seconds(20))
         .environment(environmentVariables)
